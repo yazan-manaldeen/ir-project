@@ -1,0 +1,101 @@
+<div class="app-toolbar">
+  <form [formGroup]="searchFormGroup">
+    <label class="dataset-label">Dataset: </label>
+    <select
+      class="dataset-field"
+      formControlName="datasetId">
+      <option disabled selected value="">Select Dataset</option>
+      <option *ngFor="let dataset of datasets"
+              [ngValue]="dataset.id"
+              class="dataset-option">
+        {{ dataset.name }}
+      </option>
+    </select>
+    <input class="search-field"
+           formControlName="query"
+           placeholder="Search"
+           type="text">
+    <button (click)="search(searchFormGroup.value)" class="search-button" type="submit">Search</button>
+    |
+    <ng-container>
+      <select
+        class="page-field"
+        formControlName="page">
+        <option class="dataset-option" ngValue="0" selected="0" value="0">0</option>
+        <option *ngFor="let page of pages"
+                [ngValue]="page"
+                class="dataset-option">
+          {{ page }}
+        </option>
+      </select>
+      <select
+        class="page-field"
+        formControlName="pageSize">
+        <option class="dataset-option" ngValue="10" selected="10" value="10">10</option>
+        <option *ngFor="let size of pageSizes"
+                [ngValue]="size"
+                class="dataset-option">
+          {{ size }}
+        </option>
+      </select>
+      <span>{{totalCount}}</span>
+    </ng-container>
+  </form>
+</div>
+
+<div *ngIf="suggestions.length !== 0" class="suggestions">
+  <span (click)="suggestionClick(suggestion)" *ngFor="let suggestion of suggestions"
+        class="suggestion">{{suggestion.query_text}}</span>
+</div>
+
+<ol class="docs-list">
+  <ng-container *ngIf="!loading">
+    <li *ngFor="let doc of searchResult" @fade>
+      <span class="span-id">{{doc.doc_id}}</span>
+      <span class="span-text">{{doc.doc_text}}</span>
+    </li>
+  </ng-container>
+  <ng-container *ngIf="loading">
+    <li *ngFor="let item of Array(10)" @fade
+        style="display: flex; align-items: center; padding: 4px 0;">
+      <ngx-skeleton-loader
+        [animation]="'progress'"
+        [appearance]="'line'"
+        [count]="1"
+        [theme]="{
+            'background': '#f9dd94',
+            'height': '3em',
+            'width': '11em',
+            'border': '0.3em solid rgb(255, 255, 255)',
+            'line-height': '2em',
+            'text-align': 'center',
+            'font-weight': 'bold',
+            'border-radius': '2em',
+            'transition': 'all 0.3s ease-out 0s',
+            'margin': '0',
+            'padding': '0'
+          }"
+      ></ngx-skeleton-loader>
+      <ngx-skeleton-loader
+        [animation]="'progress'"
+        [appearance]="'line'"
+        [count]="1"
+        [theme]="{
+            'background': '#DAD2CA',
+            'cursor': 'pointer',
+            'position': 'relative',
+            'display': 'inline-block',
+            'color': '#444',
+            'text-decoration': 'none',
+            'border-radius': '0.3em',
+            'z-index': '-100',
+            'width': 'calc(100vw - 16em)',
+            'margin': '0 0 0 -2em',
+            'padding': '0',
+            'height': '2.6em',
+            'transition': 'all .3s ease-out'
+          }"
+      ></ngx-skeleton-loader>
+    </li>
+  </ng-container>
+</ol>
